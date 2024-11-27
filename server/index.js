@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 let siteUrl =
   STATE === "development"
-    ? "http://localhost:3000"
+    ? "http://localhost:3001"
     : "https://speakyourmind.vercel.app";
 
 const corsOptions = {
@@ -51,6 +51,7 @@ async function createText(file) {
       },
     });
     console.log("Transcription Result:", result);
+
     fs.unlinkSync(filePath);
     return result;
   } catch (error) {
@@ -60,11 +61,14 @@ async function createText(file) {
 app.post("/makeText", upload.single("file"), async (req, res) => {
   try {
     const transcriptionFile = await createText(req.file);
-    res.status(200).json({ message: "successfull", file: transcriptionFile });
+    console.log("Transcription File:", transcriptionFile);
+    return res
+      .status(200)
+      .json({ message: "success", text: transcriptionFile });
   } catch (error) {
     res.status(400).json({ message: "unsuccessfull", error: error });
   }
 });
-app.listen(3001, () => {
+app.listen(3000, () => {
   console.log("server connected sucessfully");
 });
